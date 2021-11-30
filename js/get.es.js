@@ -33,16 +33,20 @@
     xhr.send(objParam.data);
   if(callback && typeof callback=="function"){
     xhr.onload=function(){
-       if(xhr.status==200)
-         callback(xhr.response);
+       if(xhr.status==200){
+         if(objParam.type.toLowerCase()=="headers") callback(xhr.getAllResponseHeaders());
+         else callback(xhr.response);
+       }
     };
   }else{
     return new Promise(function(resolve,reject){
       xhr.onload=function(){
-        if(xhr.status==200)
-          resolve(xhr.response);
-        else
+        if(xhr.status==200){
+         if(objParam.type.toLowerCase()=="headers") resolve(xhr.getAllResponseHeaders());
+         else resolve(xhr.response);
+        }else{
           reject(xhr.status + ": " + xhr.statusText);
+        }
       };
       xhr.onerror=function(){
         reject(xhr.status + ": " + xhr.statusText);
